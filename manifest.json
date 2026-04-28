@@ -1,0 +1,9 @@
+{
+  "id": "cursor-scrolloff",
+  "name": "Cursor Scroll Offset",
+  "version": "1.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Keeps the cursor a fixed number of visual rows from the bottom of the editor, like Vim's scrolloff.",
+  "author": "Andrew Roddy",
+  "isDesktopOnly": false
+}
