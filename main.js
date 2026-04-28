@@ -6,15 +6,29 @@ const ROWS_FROM_BOTTOM = 8;
 
 class CursorScrollOffPlugin extends Plugin {
   async onload() {
-    this.registerDomEvent(document, 'keyup', (e) => {
+    this._rafPending = false;
+
+    // Bubble phase so CM6 processes the key first (moves the cursor in state),
+    // then we schedule a RAF. CM6 also schedules a RAF to update the DOM.
+    // Since CM6's RAF was queued before ours, it fires first — so by the time
+    // our RAF runs, coordsAtPos reflects the new cursor position.
+    this.registerDomEvent(document, 'keydown', (e) => {
       const isArrow = e.key === 'ArrowUp' || e.key === 'ArrowDown';
-      // j/k without modifiers covers vim normal/visual mode movement
       const isVimNav = !e.ctrlKey && !e.altKey && !e.metaKey &&
                        (e.key === 'j' || e.key === 'k');
       if (isArrow || isVimNav) {
-        this.applyScrollOffset();
+        this.scheduleScrollCheck();
       }
-    }, true);
+    });
+  }
+
+  scheduleScrollCheck() {
+    if (this._rafPending) return;
+    this._rafPending = true;
+    requestAnimationFrame(() => {
+      this._rafPending = false;
+      this.applyScrollOffset();
+    });
   }
 
   applyScrollOffset() {
@@ -27,7 +41,6 @@ class CursorScrollOffPlugin extends Plugin {
 
     const scrollEl = cm.scrollDOM;
     const editorRect = scrollEl.getBoundingClientRect();
-    // defaultLineHeight gives one visual row's height in pixels
     const margin = cm.defaultLineHeight * ROWS_FROM_BOTTOM;
 
     const distFromBottom = editorRect.bottom - coords.bottom;
