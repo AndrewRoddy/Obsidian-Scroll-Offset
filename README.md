@@ -33,7 +33,3 @@ Open Settings > Community Plugins > Cursor Scroll Offset to configure:
 ## Contributing
 
 Pull requests are welcome on the [GitHub repository](https://github.com/AndrewRoddy/Obsidian-Cursor-Scrolloff). If you find a bug or want to suggest a feature, please open an issue first.
-
-## License
-
-MIT
